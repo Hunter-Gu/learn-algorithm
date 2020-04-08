@@ -1,0 +1,16 @@
+{
+  "name": "learn-algorithm",
+  "version": "1.0.0",
+  "description": "Learn algorithm",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vuepress dev ./docs",
+    "build": "vuepress build ./docs",
+    "deploy": "sh build/deploy.sh"
+  },
+  "author": "Hunter-Gu <1737087925@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.4.0"
+  }
+}
