@@ -17,6 +17,7 @@ module.exports = {
         ['/basic/list', '线性表 & 非线性表'],
         ['/basic/array', '数组'],
         ['/basic/linked-list', '链表'],
+        ['/basic/stack', '栈'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
