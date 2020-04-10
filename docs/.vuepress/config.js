@@ -13,7 +13,10 @@ module.exports = {
       sidebarDepth: 2,    // 可选的, 默认值是 1
       children: [
         // ['/basic/README', '前言'],
-        ['/basic/analysis-of-algorithm', '复杂度分析']
+        ['/basic/analysis-of-algorithm', '复杂度分析'],
+        ['/basic/list', '线性表 & 非线性表'],
+        ['/basic/array', '数组'],
+        ['/basic/linked-list', '链表'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
