@@ -19,6 +19,7 @@ module.exports = {
         ['/basic/linked-list', '链表'],
         ['/basic/stack', '栈'],
         ['/basic/queue', '队列'],
+        ['/basic/recursion', '递归'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
