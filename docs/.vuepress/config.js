@@ -21,6 +21,14 @@ module.exports = {
         ['/basic/queue', '队列'],
         ['/basic/recursion', '递归'],
       ]
+    }, {
+      title: '排序',   // 必要的
+      path: '/sort/',      // 可选的, 应该是一个绝对路径
+      collapsable: false, // 可选的, 默认值是 true,
+      sidebarDepth: 2,    // 可选的, 默认值是 1
+      children: [
+
+      ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
     docsDir: 'docs',
