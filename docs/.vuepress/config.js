@@ -27,7 +27,14 @@ module.exports = {
       collapsable: false, // 可选的, 默认值是 true,
       sidebarDepth: 2,    // 可选的, 默认值是 1
       children: [
-
+        ['/sort/bubble', '冒泡排序'],
+        ['/sort/insertion', '插入排序'],
+        ['/sort/selection', '选择排序'],
+        ['/sort/merge', '归并排序'],
+        ['/sort/quick', '快速排序'],
+        ['/sort/bucket', '桶排序'],
+        ['/sort/radix', '基数排序'],
+        ['/sort/optimize', '优化排序算法'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
