@@ -36,6 +36,14 @@ module.exports = {
         ['/sort/radix', '基数排序'],
         ['/sort/optimize', '优化排序算法'],
       ]
+    }, {
+      title: '查找',
+      path: '/search/',
+      collapsable: false, // 可选的, 默认值是 true,
+      sidebarDepth: 2,    // 可选的, 默认值是 1
+      children: [
+        ['/search/binary', '二分查找'],
+      ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
     docsDir: 'docs',
