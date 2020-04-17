@@ -43,6 +43,7 @@ module.exports = {
       sidebarDepth: 2,    // 可选的, 默认值是 1
       children: [
         ['/search/binary', '二分查找'],
+        ['/search/skip-list', '跳表'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
