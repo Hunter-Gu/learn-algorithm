@@ -31,7 +31,7 @@ function cal(num: number) {
 上面这段代码用于求 1,2,3,...,n 的累加和，现在对该算法的执行时间进行评估（假设每行代码的运行时间都为 unit_time）：
 
 - 第 2 行代码只运行 1 次，需要 1 个 unit_time
-- 第 3、4 行代码都会运行 n 次，需要，需要 2n * unit_time
+- 第 3、4 行代码都会运行 n 次，需要 2n * unit_time
 
 最终这段代码的总执行时间为 (2n + 2) * unit_time，那么我们就得到了：
 
@@ -78,11 +78,13 @@ function cal(num: number) {
 
 #### 多项式量级
 
-- O(n)                            常量阶
-- O(logn)                       对数阶
-- O(n)                            线性阶
-- O(n * logn)                   线性对数阶
+- O(n)                      常量阶
+- O(logn)                   对数阶
+- O(n)                      线性阶
+- O(n * logn)               线性对数阶
 - O(n^2),O(n^3),...,O(n^k)  平方阶
+- O(2^n)                    指数阶
+- O(n!)                     阶乘阶
 
 这里需要提一下对数阶时间复杂度，因为它非常常见，同时又非常难分析。举个例子：
 
@@ -248,9 +250,9 @@ function find(arr: number[], x: number) {
 
 ```ts
 // 假设 num >= 0
-function assignOrSum(num: number) {
-  let count = 0
+let count = 0
 
+function assignOrSum(num: number) {
   if (n === count) {
     for (let i = 0; i < n; i++) {
       count += i;
@@ -266,10 +268,10 @@ function assignOrSum(num: number) {
 首先，我们分析一下上述代码的时间复杂度：
 
 - 最好情况：此时 `num !== count`，时间复杂度为 O(1)
-- 最坏情况：此时 `num === count`，事件复杂度为 O(n)
+- 最坏情况：此时 `num === count`，时间复杂度为 O(n)
 - 平均情况：此时一共 n + 1 种情况，并且每种情况的概率都是 1/(n + 1)，所以最终平均时间复杂度为 O(1)：![平均情况时间复杂度](@imgs/6df62366a60336d9de3bc34f488d8bed.jpg)
 
-但是这里的平均情况事件复杂度其实并不需要这么复杂，不需要引入概率论的知识。
+但是这里的平均情况时间复杂度其实并不需要这么复杂，不需要引入概率论的知识。
 
 和之前的例子对比会发现：
 
@@ -287,3 +289,32 @@ function assignOrSum(num: number) {
 - 一般来说，均摊时间复杂度等于最好情况时间复杂度
 
 此时就可以将这一组操作放在一起，看看是否可以将耗时的操作，平摊到耗时少的操作上。
+
+## 思考
+
+分析一下下面这个 add() 函数的时间复杂度：
+
+```ts
+// 全局变量，大小为10的数组array，长度len，下标i。
+int array[] = new int[10];
+int len = 10;
+int i = 0;
+
+// 往数组中添加一个元素
+void add(int element) {
+   if (i >= len) { // 数组空间不够了
+     // 重新申请一个2倍大小的数组空间
+     int new_array[] = new int[len*2];
+     // 把原来array数组中的数据依次copy到new_array
+     for (int j = 0; j < len; ++j) {
+       new_array[j] = array[j];
+     }
+     // new_array复制给array，array现在大小就是2倍len了
+     array = new_array;
+     len = 2 * len;
+   }
+   // 将element放到下标为i的位置，下标i加一
+   array[i] = element;
+   ++i;
+}
+```

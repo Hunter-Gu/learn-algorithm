@@ -31,7 +31,91 @@
 
 在链表中插入或者删除一个数据，并不需要为了保持内存的连续性而搬移结点，因为链表的存储空间本身就不是连续的。所以，在链表中插入和删除一个数据是非常快速的，时间复杂度为 O(1)。
 
-有利就有弊，链表要想随机访问第 k 个元素，就没有数组那么高效了。因为链表中的数据并非连续存储的，所以无法像数组那样，根据首地址和下标，通过寻址公式就能直接计算出对应的内存地址，而是需要根据指针一个结点一个结点地依次遍历，直到找到相应的结点，事件复杂度为 O(n)。
+有利就有弊，链表要想随机访问第 k 个元素，就没有数组那么高效了。因为链表中的数据并非连续存储的，所以无法像数组那样，根据首地址和下标，通过寻址公式就能直接计算出对应的内存地址，而是需要根据指针一个结点一个结点地依次遍历，直到找到相应的结点，时间复杂度为 O(n)。
+
+```ts
+interface List<T> {
+  findByIndex(index: number): any;
+
+  remove(index: number): boolean;
+
+  insert(value: T, index: number): boolean;
+}
+
+class LinkedListNode<T> {
+  data: T;
+  next: LinkedListNode;
+
+  constructor(value: T, next = null) {
+    this.data = value;
+    this.next = next;
+  }
+}
+
+class LinkedList<T> implements List<T> {
+
+  // 哨兵结点
+  protected head = new LinkedListNode<T>(null, this.tail);
+  protected tail = new LinkedListNode();
+  protected _size = 0;
+
+  get size() {
+    return this._size;
+  }
+
+  findByIndex(index: number) {
+    let node = this.head.next,
+        pos = 0;
+    while (node && pos !== index) {
+      node = node.next;
+      pos += 1;
+    }
+
+    return node;
+  }
+
+  // 删除指定 index 后的结点
+  remove(index: number) {
+    const node = this.findByIndex(index);
+
+    if (node !== null) {
+      node.next = node.next.next;
+      this._size -= 1;
+      return true
+    }
+
+    return false
+  }
+
+  // 在指定的 index 后插入结点
+  insert(value: T, index: number) {
+    const node = this.findByIndex(index);
+
+    if (node !== null) {
+      const newNode = new LinkedListNode(value, node.next.next);
+      node.next = newNode;
+      this._size += 1;
+      return true;
+    }
+    return false;
+  }
+
+  // 头插法
+  insertToHead(value: T) {
+    const newNode = new LinkedListNode(value, this.head.next);
+    this.head.next = newNode;
+    this._size += 1;
+  }
+
+  // 尾插法
+  insertToTail(value) {
+    const newNode = new LinkedListNode(value, this.tail);
+    const node = this.findByIndex(this.size - 1);
+
+    node.next = newNode;
+  }
+}
+```
 
 ## 循环链表
 
@@ -43,7 +127,26 @@
 
 ### 如何判断是循环链表
 
-快慢指针！
+```ts
+interface LinkedListNode<T> {
+  data: T;
+  next: LinkListNode;
+}
+
+function checkCircle<T>(linkedList: LinkedListNode<T>) {
+  let slow = linkedList,
+      fast = linkedList.next;
+
+  while (fast !== null && fast.next !== null) {
+    slow = slow.next;
+    fast = fast.next.next;
+
+    if (slow === fast) return true
+  }
+
+  return false
+}
+```
 
 ## 双向链表
 
@@ -76,17 +179,25 @@
 
 除此以外，对于一个有序链表，双向链表的按值查询的效率也要比单链表高一些。因为，我们可以记录上次查找的位置 p，每次查询时，根据要查找的值与 p 的大小关系，决定是往前还是往后查找，所以平均只需要查找一半的数据。
 
+```ts
+interface DoublyLinkedListNode<T> {
+  data: T;
+  prev: DoublyLinkedListNode<T>;
+  next: DoublyLinkedListNode<T>;
+}
+```
+
 总的来说，双向链表要比单链表更加高效，所以在实际的软件开发中，尽管比较费内存，双向链表还是比单链表的应用更加广泛。如 Java 中的 `LinkedHashMap` 的实现中就用到了双向链表。
 
 ### 空间换时间
 
-对于执行较慢的程序，可以通过消耗更多的内存（空间换时间）来进行优化；而消耗过多内存的程序，可以通过消耗更多的时间（时间换空间）来降低内存的消耗。
+**对于执行较慢的程序，可以通过消耗更多的内存（空间换时间）来进行优化；而消耗过多内存的程序，可以通过消耗更多的时间（时间换空间）来降低内存的消耗**。
 
 ## 数组 or 链表
 
-数组在实现上使用的是连续的内存空间，可以借助 CPU 的缓存机制，预读数组中的数据，所以访问效率更高（CPU 从内存读取数据的时会先把读取到的数据加载到 CPU 的缓存中，且每次从内存读取的是一个数据块，而数组的存储空间是连续的，所以在加载某个下标的时候可以把以后的几个下标元素也加载到 CPU 缓存）。而链表在内存中并不是连续存储，所以对 CPU 缓存不友好，没办法有效预读。
+数组在实现上使用的是连续的内存空间，可以**借助 CPU 的缓存机制，预读数组中的数据**，所以访问效率更高（CPU 从内存读取数据的时会先把读取到的数据加载到 CPU 的缓存中，且每次从内存读取的是一个数据块，而数组的存储空间是连续的，所以在加载某个下标的时候可以把以后的几个下标元素也加载到 CPU 缓存）。而链表在内存中并不是连续存储，所以对 CPU 缓存不友好，没办法有效预读。
 
-如果你的代码对内存的使用非常苛刻，那数组就更适合你。因为链表中的每个结点都需要消耗额外的存储空间去存储一份指向下一个结点的指针，所以内存消耗会翻倍。
+如果你的代码**对内存的使用非常苛刻，那数组就更适合你**。因为链表中的每个结点都需要消耗额外的存储空间去存储一份指向下一个结点的指针，所以内存消耗会翻倍。
 
 而且，对链表进行频繁的插入、删除操作，还会导致频繁的内存申请和释放，容易造成内存碎片。
 
@@ -102,8 +213,6 @@
 - 最少使用策略 LFU（Least Frequently Used）
 - 最近最少使用策略 LRU（Least Recently Used）
 
-这些策略和我们“断舍离”时，需要扔掉一些东西类似。
-
 那么如何基于链表实现 LRU 缓存淘汰算法？
 
 维护一个有序单链表，越靠近链表尾部的结点是越早之前访问的。当有一个新的数据被访问时，我们从链表头开始顺序遍历链表。
@@ -114,6 +223,66 @@
   - 此时缓存已满，链表尾结点删除，将新的数据结点插入链表的头部
 
 那么时间复杂度为O(n)，因为不管缓存有没有满，我们都需要遍历一遍链表。
+
+```ts
+class LinkedListForLRU<T> extends LinkedList<T> {
+  findByValue(value:T) {
+    let node = this.head;
+
+    while(node && node.data !== value) {
+      node = node.next;
+    }
+
+    return node;
+  }
+
+  removeByValue(value: T) {
+    let node = this.head;
+    let prev = null
+
+    while(node && node.data !== value) {
+      node = node.next;
+      prev = node;
+    }
+
+    if (!node) return false;
+
+    prev.next = node.next;
+    return true;
+  }
+}
+
+class LRUCache<T> {
+
+  private size: number;
+  private linkedListForLRU: LinkedListForLRU<T>;
+
+  constructor(size: number) {
+    this.size = size;
+    this.linkedListForLRU = new LinkedListForLRU<T>();
+  }
+
+  public get(value: T) {
+    let node = this.linkedListForLRU.findByValue(value);
+
+    if (node) {
+      this.linkedListForLRU.removeByValue(value);
+    } else {
+      node = new LinkedListNode(value);
+
+      // 链表已满
+      if (this.linkedListForLRU.size === this.size) {
+        // 删除末尾的
+        this.linkedListForLRU.remove(this.linkedListForLRU.size - 1);
+      }
+    }
+
+    this.linkedListForLRU.insertToHead(node);
+
+    return node;
+  }
+}
+```
 
 ## 编写链表代码的技巧
 
@@ -191,7 +360,7 @@ if (head->next == null) {
 
 ![哨兵结点](@imgs/7d22d9428bdbba96bfe388fe1e3368c7.jpg)
 
-哨兵结点不存储数据，因为哨兵结点一直存在，所以插入第一个结点和插入其他节点的操作，就都一样；删除最后一个结点的操作和删除其他结点的操作，也都一样了。
+**哨兵结点不存储数据，因为哨兵结点一直存在，所以插入第一个结点和插入其他结点的操作，就都一样；删除最后一个结点的操作和删除其他结点的操作，也都一样了**。
 
 ### 重点留意边界条件处理
 
@@ -221,3 +390,13 @@ if (head->next == null) {
 ## 题目
 
 Leetcode: 206，141，21，19，876
+
+## 思考
+
+### 问题 1
+
+如何判断一个字符串是否是回文字符串的问题，我想你应该听过，我们今天的题目就是基于这个问题的改造版本。如果字符串是通过单链表来存储的，那该如何来判断是一个回文串呢？你有什么好的解决思路呢？相应的时间空间复杂度又是多少呢？
+
+### 问题 2
+
+今天我们讲到用哨兵来简化编码实现，你是否还能够想到其他场景，利用哨兵可以大大地简化编码难度？
