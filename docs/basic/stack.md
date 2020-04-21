@@ -16,6 +16,86 @@
 - 顺序栈：用数组实现
 - 链式栈：用链表实现
 
+```ts
+interface Stack<T> {
+  push(value: T): boolean;
+  pop(): T;
+}
+
+class ArrayStack<T> implements Stack<T> {
+  private _size: number;
+  private items = [];
+  private _count = 0;
+
+  get size() {
+    return this._size;
+  }
+
+  get count() {
+    return this._count;
+  }
+
+  constructor(size: number) {
+    this._size = size;
+  }
+
+  push(value: T) {
+    if (this.count === this.size)
+      return false;
+
+    this.items[this.count] = value;
+    this._count += 1;
+    return true;
+  }
+
+  pop() {
+    if (this.count === 0)
+      return null
+    const tmp = this.items.pop();
+    this._count -= 1;
+    return tmp;
+  }
+}
+
+class LinkedListNode {
+  data = null;
+  next = null;
+
+  constructor(data, next) {
+    this.data = data;
+    this.next = next;
+  }
+}
+
+class LinkedListStack<T> implements Stack<T> {
+  private _size: number;
+  private head = new LinkedListNode();
+  private _count = 0;
+
+  constructor(size: number) {
+    this._size = size;
+  }
+
+  push(value: T) {
+    if (this.count === this.size)
+      return false;
+
+    this.head = new LinkedListNode(value, this.head.next);
+    this._count += 1;
+    return true;
+  }
+
+  pop() {
+    if (this.count === 0)
+      return null;
+    const tmp = this.head;
+    this.head = this.head.next;
+    this._count -= 1;
+    return tmp;
+  }
+}
+```
+
 ### 动态扩容的顺序栈
 
 如果要实现一个支持动态扩容的栈，我们只需要底层依赖一个支持动态扩容的数组就可以了。这里需要注意的是：
@@ -25,7 +105,6 @@
   - 最好情况时间复杂度是 O(1)
   - 最坏情况时间复杂度是 O(n)
   - 平均情况下的时间复：使用均摊分析得 O(1)
-
 
 ## 应用
 
@@ -37,21 +116,20 @@
 
 ![函数调用栈](@imgs/17b6c6711e8d60b61d65fb0df5559a1c.jpg)
 
-```c
-int main() {
-   int a = 1;
-   int ret = 0;
-   int res = 0;
-   ret = add(3, 5);
-   res = a + ret;
-   printf("%d", res);
-   reuturn 0;
+```ts
+function main() {
+  const a = 1;
+  let ret = 0;
+  let res = 0;
+  ret = add(3, 5)
+  res = a + ret;
+  return 0;
 }
 
-int add(int x, int y) {
-   int sum = 0;
-   sum = x + y;
-   return sum;
+function add(x: number, y: number) {
+  let sum = 0;
+  sum = x + y;
+  return sum;
 }
 ```
 
@@ -67,7 +145,7 @@ int add(int x, int y) {
 
 编译器利用栈来实现表达式求值，是栈的另一个常见的应用场景。
 
-以只包含加减乘除四则运算为例，比如：34+13*9+44-12/3？
+以只包含加减乘除四则运算为例，比如：3+5*8-6
 
 通过两个栈即可实现：
 
@@ -83,6 +161,49 @@ int add(int x, int y) {
   - 优先级比运算符栈顶元素高，当前运算符压入栈
   - 优先级比运算符栈顶元素低或者相同，从运算符栈中取栈顶运算符，从操作数栈的栈顶取 2 个操作数
   - 进行计算，再把计算完的结果压入操作数栈，继续比较
+
+```ts
+function calc(exp: string) {
+  const PRIORITY  = ['+', '-'];
+  const numbers = new ArrayStack<number>(100);
+  const operators = new ArrayStack<string>(100);
+
+  for (let i = 0; i < exp.length; i++) {
+    const s = exp[i];
+    if (typeof Number(s) === 'number') {
+      numbers.push(Number(s));
+    } else {
+      const top = operators.pop();
+
+      if (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) === -1) {
+        operators.push(top);
+        operators.push(s);
+      } else {
+        const left = numbers.pop();
+        const right = numbers.pop();
+        const res = left + s + right;
+        numbers.push(res + top + numbers.pop());
+      }
+
+      // if ((PRIORITY.indexOf(top) === -1 && PRIORITY.indexOf(s) === -1)
+      //   || (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) !== -1))
+      // {
+      //   // 优先级相同，直接计算
+      //   const left = numbers.pop();
+      //   const right = numbers.pop();
+      //   const res = left + s + right;
+      //   numbers.push(res + top + numbers.pop());
+      // // } else if (PRIORITY.indexOf(top) === -1 && PRIORITY.indexOf(s) !== -1) {
+      //   // 顶部优先级高
+
+      // } else if (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) === -1) {
+      //   operators.push(top);
+      //   operators.push(s);
+      // }
+    }
+  }
+}
+```
 
 ### 括号匹配
 
@@ -101,3 +222,7 @@ int add(int x, int y) {
 ## 题目
 
 Leetcode: 20,155,232,844,224,682,496
+
+## 问题
+
+我们都知道，JVM 内存管理中有个“堆栈”的概念。栈内存用来存储局部变量和方法调用，堆内存用来存储 Java 中的对象。那 JVM 里面的“栈”跟我们这里说的“栈”是不是一回事呢？如果不是，那它为什么又叫作“栈”呢？
