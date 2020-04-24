@@ -12,9 +12,54 @@
 
 可以看出，经过一次冒泡操作之后，6 这个元素已经存储在正确的位置上。要想完成所有数据的排序，我们只要进行 6 次这样的冒泡操作就行了。
 
+```ts
+function bubbleSort(arr: number[]) {
+  // 一次冒泡操作
+  const bubbleOperator = () => {
+    for (let j = 0; j < arr.length - 1; j++) {
+      if (arr[j + 1] < arr[j]) {
+        const tmp = arr[j]
+        arr[j] = arr[j + 1]
+        arr[j + 1] = tmp
+      }
+    }
+  }
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    bubbleOperator()
+  }
+  return arr
+}
+```
+
 这个冒泡过程可以优化：当某次冒泡操作已经没有数据交换时，说明已经达到完全有序，不用再继续执行后续的冒泡操作。
 
-TODO 冒泡排序算法代码
+```ts
+function bubbleSort(arr: number[]) {
+  // 一次冒泡操作
+  const bubbleOperator = () => {
+    // 是否本身就是有序的
+    let ordered = true
+    for (let j = 0; j < arr.length - 1; j++) {
+      if (arr[j + 1] < arr[j]) {
+        const tmp = arr[j]
+        arr[j] = arr[j + 1]
+        arr[j + 1] = tmp
+        ordered = false
+      }
+    }
+    return ordered
+  }
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    if (bubbleOperator()) {
+      break
+    }
+  }
+  return arr
+}
+```
+
 
 ## 性能分析
 
