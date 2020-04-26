@@ -22,13 +22,46 @@
 
 ```
 递推公式：
-quick_sort(p…r) = quick_sort(p…q-1) + quick_sort(q+1… r)
+quick_sort(p, r) = quick_sort(p, q - 1) + quick_sort(q + 1, end)
 
 终止条件：
 p >= r
 ```
 
-TODO 快速排序算法
+```ts
+function quickSort(arr: number[]) {
+  const quickSortInternal = (arr, p, r) => {
+    if (p >= r) return
+
+    const q = partition(arr, p, r)
+    quickSortInternal(arr, p, q - 1)
+    quickSOrtInternal(arr, q + 1, r)
+  }
+  const partition = (arr, p, r) => {
+    const pivot = arr[p]
+    let index = p + 1
+
+    for (let i = index; i <= r; i++) {
+      if (arr[i] < pivot) {
+        swap(arr, index, i)
+        index++
+      }
+    }
+    swap(arr, p, index - 1)
+    return index - 1
+  }
+
+  const swap = (arr, p, q) => {
+    const tmp = arr[p]
+    arr[p] = arr[q]
+    arr[q] = tmp
+  }
+
+  quickSortInternal(arr, 0, arr.length - 1)
+
+  return arr
+}
+```
 
 ## 特点
 

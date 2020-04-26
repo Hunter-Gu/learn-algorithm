@@ -134,8 +134,43 @@ function bubbleSort(arr: number[]) {
 
 ## 链表实现
 
-TODO
+如果数据存储在链表中，冒泡排序算法还能工作吗？如果能，那相应的时间、空间复杂度又是多少呢？
 
-都是基于数组实现的。如果数据存储在链表中，这三种排序算法还能工作吗？如果能，那相应的时间、空间复杂度又是多少呢？
+> 此处直接使用链表 `LinkedList`，详见[链表](/basic/linked-list.html#%E6%9F%A5%E6%89%BE%E3%80%81%E6%8F%92%E5%85%A5%E5%92%8C%E5%88%A0%E9%99%A4)的实现
 
-对于老师所提课后题，觉得应该有个前提，是否允许修改链表的节点value值，还是只能改变节点的位置。一般而言，考虑只能改变节点位置，冒泡排序相比于数组实现，比较次数一致，但交换时操作更复杂；插入排序，比较次数一致，不需要再有后移操作，找到位置后可以直接插入，但排序完毕后可能需要倒置链表；选择排序比较次数一致，交换操作同样比较麻烦。综上，时间复杂度和空间复杂度并无明显变化，若追求极致性能，冒泡排序的时间复杂度系数会变大，插入排序系数会减小，选择排序无明显变化。
+```ts
+function bubbleSortForLinkedList<T>(linkedList: LinkedList<T>) {
+  // 假设可以直接访问 头、尾指针
+  const head = linkedList.head
+  const tail = linkedList.tail
+  const bubbleOperator = (node) => {
+    // 使用 prev 节点方便更新位置
+    let prev = node
+    while (node.next !== tail) {
+      if (node.value > node.next.value) {
+        const tmp = node.next
+        prev.next = tmp
+        node.next = tmp.next
+        tmp.next = node
+        // 只需要更新 prev 节点
+        prev = tmp
+      } else {
+        prev = node
+        node = node.next
+      }
+    }
+  }
+  let i = 0
+  while (i < linkedList.size) {
+    i++
+    bubbleOperator(head)
+  }
+
+  return linkedList
+}
+```
+
+可以看到，相对于数组实现而言，比较次数一致，但交换时操作更复杂。所以：
+
+- 时间复杂度仍未 O(n^2)
+- 空间复杂度仍为 O(1)

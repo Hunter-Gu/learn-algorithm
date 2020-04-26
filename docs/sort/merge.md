@@ -19,17 +19,102 @@
 
 ```
 递推公式：
-merge_sort(p…r) = merge(merge_sort(p…q), merge_sort(q+1…r))
+merge_sort(start, end) = merge(merge_sort(start, middle), merge_sort(middle + 1, end))
 
 终止条件：
-p >= r 不用再继续分解
+start === end 不用再继续分解
 ```
 
 有了递推公式，转化成代码就简单多了。
 
-TODO 归并排序代码
+```ts
+function mergeSort(arr: number[]) {
+     const mergeOperator = (arr, start, middle, end) => {
+          const tmp = new Array(end + 1 - start)
 
-如果使用哨兵，代码会是怎么样的
+          let i = start, // 记录 start -> middle
+              j = middle + 1, // 记录 middle + 1 -> end
+              k = 0 // 记录 tmp 数组下标
+          while (i <= middle && j <= end) {
+               if (arr[i] < arr[j]) {
+                    tmp[k] = arr[i]
+                    i += 1
+               } else {
+                    tmp[k] = arr[j]
+                    j += 1
+               }
+               k += 1
+          }
+
+          // 处理剩余项
+          let restStart = i, restEnd = middle
+          if (j <= end) {
+               restStart = j
+               restEnd = end
+          }
+
+          while (restStart <= restEnd) {
+               tmp[k] = arr[restStart]
+               restStart += 1
+               k += 1
+          }
+
+          // 将临时数组 tmp 中的数据放回 arr，实现原地排序
+          for (let l = start; l < end + 1; l++) {
+               arr[l] = tmp[l - start]
+          }
+     }
+     const mergeSortInternal = (arr, start, end) => {
+          if (start === end) return
+          const middle = Math.floor((end - start) / 2 + start)
+
+           mergeSortInternal(arr, start, middle)
+           mergeSortInternal(arr, middle + 1, end)
+           mergeOperator(arr, start, middle, end)
+     }
+
+     mergeSortInternal(arr, 0, arr.length - 1)
+     return arr
+}
+```
+
+可以看到合并操作时，需要对剩余项进行特殊处理。可以通过哨兵优化：
+
+::: tip
+想一下为什么会需要对剩余项进行特殊处理？
+造成这个的根本原因，是因为剩余项中的最小值，比另一个数组中的最大值还要大，所以可以在两个数组中都添加一个最大值。
+:::
+
+```ts
+const mergeOperator = (arr, start, middle, end) => {
+     const left = new Array(middle - start + 2)
+     const right = new Array(end - (middle + 1) + 2)
+
+     // 复制值并添加哨兵（最大值）
+     for (let i = start; i < middle + 1; i++) {
+          left[i - start] = arr[i]
+     }
+     left[left.length - 1] = Infinity
+
+     for (let j = middle + 1; j < end + 1; j++) {
+          right[j - middle - 1] = arr[j]
+     }
+     right[right.length - 1] = Infinity
+
+     let i = 0, j = 0, k = start
+     while (k < end + 1) {
+          if (left[i] < right[j]) {
+               arr[k] = left[i]
+               i += 1
+               k += 1
+          } else {
+               arr[k] = right[j]
+               j += 1
+               k += 1
+          }
+     }
+}
+```
 
 ## 性能分析
 
@@ -74,9 +159,9 @@ T(n) = 2 * T(n/2) + n
      ......
 ```
 
-接下来，我们需要求解 k 和 n 的关系，因为 T(1) = C，所以基于 T(1) = T( n/2 ^ k)，即 n/2 ^ k = 1 可以求得 k = log2(n)，代入公式得 T(n)=Cn + n * log2(n)，所以归并排序的时间复杂度是 O(nlogn)。
+接下来，我们需要求解 k 和 n 的关系，因为 T(1) = C，所以当 T(1) = T( n/2 ^ k)时，即 n/2 ^ k = 1 可以求得 k = log2(n)，代入公式得 T(n)=Cn + n * log2(n)，所以归并排序的时间复杂度是 O(nlogn)。
 
-从我们的原理分析和伪代码可以看出，归并排序的执行效率与要排序的原始数组的有序程度无关，所以其时间复杂度是非常稳定的，不管是最好情况、最坏情况，还是平均情况，时间复杂度都是 O(nlogn)。
+我们可以看出，归并排序的执行效率与要排序的原始数组的有序程度无关，所以其时间复杂度是非常稳定的，不管是最好情况、最坏情况，还是平均情况，时间复杂度都是 O(nlogn)。
 
 ### 原地排序 - 空间复杂度
 
