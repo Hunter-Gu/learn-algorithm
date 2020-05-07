@@ -32,7 +32,7 @@ module.exports = {
         ['/sort/selection', '选择排序'],
         ['/sort/merge', '归并排序'],
         ['/sort/quick', '快速排序'],
-        ['/sort/bucket', '桶排序'],
+        ['/sort/bucket', '桶排序 & 计数排序'],
         ['/sort/radix', '基数排序'],
         ['/sort/optimize', '优化排序算法'],
       ]
