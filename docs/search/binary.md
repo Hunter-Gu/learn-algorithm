@@ -22,17 +22,53 @@ O(logn) 是非常惊人的查找速度，即使 n 非常大，对应的 logn 也
 
 用大 O 标记法表示时间复杂度的时候，会省略掉常数、系数和低阶。对于常量级时间复杂度的算法来说，O(1) 有可能表示的是一个非常大的常量值，比如 O(1000)、O(10000)。所以，常量级时间复杂度的算法有时候可能还没有 O(logn) 的算法执行效率高。
 
-反过来，对数对应的就是指数。有一个非常著名的“阿基米德与国王下棋的故事”，你可以自行搜索一下，感受一下指数的“恐怖”。这也是为什么我们说，指数时间复杂度的算法在大规模数据面前是无效的。
-
 ## 二分查找的实现
 
 ### 递归
 
-TODO
+```ts
+// TODO 感觉可以优化
+function binarySearch<T>(arr: T[], target: T) {
+  const binarySearchInternal = (arr: T[], target: T, start: number, end: number): number | null => {
+    const middle = Math.floor((end - start) / 2) + start
+
+	  if (start === end) {
+		  return arr[middle] !== target ? -1 : middle
+	  }
+
+    if (arr[middle] === target) {
+      return middle
+    } else if (arr[middle] > target) {
+      return binarySearchInternal(arr, target, start, middle - 1)
+    } else {
+      return binarySearchInternal(arr, target, middle + 1, end)
+    }
+  }
+
+  return binarySearchInternal(arr, target, 0, arr.length - 1)
+}
+```
 
 ### 非递归
 
-TODO
+```ts
+function binarySearch<T>(arr: T[], target: T) {
+  let start = 0,
+      end = arr.length - 1
+
+  while (end >= start) {
+    const middle = Math.floor((end - start) / 2) + start
+    if (target === arr[middle]) {
+      return middle
+    } else if (target > arr[middle]) {
+      start = middle + 1
+    } else {
+      end = middle - 1
+    }
+  }
+  return -1
+}
+```
 
 ## 局限性
 
@@ -83,11 +119,11 @@ TODO
 
 ## 思考
 
-### 问题 1
+### 查找某个值
 
 假设我们有 1000 万个整数数据，每个数据占 8 个字节，如何设计数据结构和算法，快速判断某个整数是否出现在这 1000 万数据中？我们希望这个功能不要占用太多的内存空间，最多不要超过 100MB，怎么做呢？
 
-我们的内存限制是 100MB，每个数据大小是 8 字节，最简单的办法就是将数据存储在数组中，内存占用差不多是 80MB，符合内存的限制。
+分析：每个数据大小是 8 字节，最简单的办法就是将数据存储在数组中，内存占用差不多是 80MB，符合内存的限制 100 MB。
 
 - 先对这 1000 万数据从小到大排序
 - 然后再利用二分查找算法，就可以快速地查找想要的数据了
@@ -96,13 +132,39 @@ TODO
 
 如何实现“求一个数的平方根”？要求精确到小数点后 6 位。
 
-因为要精确到后六位，可以先用二分查找出整数位，然后再二分查找小数第一位，第二位，到第六位。
+分析：因为要精确到后六位，可以先用二分查找出整数位，然后再二分查找小数第一位，第二位，...，一直到第六位。
 
-整数查找很简单，判断当前数小于+1后大于即可找到，
+- 整数查找很简单，判断当前数小于+1后大于即可找到
+- 小数查找举查找小数后第一位来说，从 x.0 到 (x+1).0，查找终止条件与整数一样，当前数小于，加 0.1 大于
+- 后面的位数以此类推，可以用 x*10^(-i) 通项来循环或者递归，终止条件是 i > 6
 
-小数查找举查找小数后第一位来说，从x.0到(x+1).0，查找终止条件与整数一样，当前数小于，加0.1大于，
+```ts
+function sqrt(num: number, prec = 0) {
+  let start = 0,
+    end = num
+  const bitCalc = (num, unit = 1) => {
+    while (end >= start) {
+      const middle = Math.floor((end - start) / 2) + start
+      const square = middle * middle
+      // TODO
+      if (square === num || (square < num && (middle + unit) * (middle + unit) > num)) {
+        return middle
+      } else if (square > num) {
+        end = middle - unit
+      } else {
+        start = middle + unit
+      }
+    }
+  }
 
-后面的位数以此类推，可以用x*10^(-i)通项来循环或者递归，终止条件是i>6，
+  let value = 0
+  for (let i = 0; i < 7; i++) {
+    value += bitCalc(num, Math.pow(1, -i))
+  }
+
+  return value
+}
+```
 
 想了一下复杂度，每次二分是logn，包括整数位会查找7次，所以时间复杂度为7logn。空间复杂度没有开辟新的储存空间，空间复杂度为1。
 
