@@ -37,13 +37,13 @@
 function radixSort (array: number[], max: number) {
 	const buckets: number[][] = []
 	let unit = 10,
-		  base = 1
+		base = 1
 	for (let i = 0; i < max; i++) {
 		for (let j = 0; j < array.length; j++) {
-      // 依次过滤出个位，十位等等数字
+			// 依次过滤出个位，十位等等数字
 			let index = Math.floor((array[j] % unit) / base)
 
-      // 初始化桶
+			// 初始化桶
 			if (!buckets[index]) {
 				buckets[index] = []
 			}
@@ -53,8 +53,8 @@ function radixSort (array: number[], max: number) {
 		for (let j = 0, length = buckets.length; j < length; j++) {
 			if (buckets[j]) {
 				while ((value = buckets[j].shift()) != null) {
-				  array[pos++] = value;
-			  }
+					array[pos++] = value;
+				}
 			}
 		}
 		base *= 10
