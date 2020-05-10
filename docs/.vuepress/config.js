@@ -47,6 +47,7 @@ module.exports = {
         ['/search/hash-table', '散列表'],
         ['/search/design-hash-table', '设计散列表'],
         ['/search/hash-table-and-linked-list', '散列表和链表组合'],
+        ['/search/hash', 'Hash 算法'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
