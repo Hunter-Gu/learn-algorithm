@@ -22,10 +22,10 @@ module.exports = {
         ['/basic/recursion', '递归'],
       ]
     }, {
-      title: '排序',   // 必要的
-      path: '/sort/',      // 可选的, 应该是一个绝对路径
-      collapsable: false, // 可选的, 默认值是 true,
-      sidebarDepth: 2,    // 可选的, 默认值是 1
+      title: '排序',
+      path: '/sort/',
+      collapsable: false,
+      sidebarDepth: 2,
       children: [
         ['/sort/bubble', '冒泡排序'],
         ['/sort/insertion', '插入排序'],
@@ -39,8 +39,8 @@ module.exports = {
     }, {
       title: '查找',
       path: '/search/',
-      collapsable: false, // 可选的, 默认值是 true,
-      sidebarDepth: 2,    // 可选的, 默认值是 1
+      collapsable: false,
+      sidebarDepth: 2,
       children: [
         ['/search/binary', '二分查找'],
         ['/search/skip-list', '跳表'],
@@ -48,6 +48,15 @@ module.exports = {
         ['/search/design-hash-table', '设计散列表'],
         ['/search/hash-table-and-linked-list', '散列表和链表组合'],
         ['/search/hash', 'Hash 算法'],
+      ]
+    }, {
+      title: '树',
+      path: '/tree/',
+      collapsable: false,
+      sidebarDepth: 2,
+      children: [
+        ['/tree/binary-tree', '二叉树'],
+        ['/tree/binary-search-tree', '二叉查找树'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
