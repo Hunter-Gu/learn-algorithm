@@ -57,6 +57,17 @@ module.exports = {
       children: [
         ['/tree/binary-tree', '二叉树'],
         ['/tree/binary-search-tree', '二叉查找树'],
+        ['/tree/red-black-tree', '红黑树'],
+        ['/tree/recursion-tree', '递归树'],
+        ['/tree/heap', '堆'],
+      ]
+    }, {
+      title: '图',
+      path: '/graph/',
+      collapsable: false,
+      sidebarDepth: 2,
+      children: [
+
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
