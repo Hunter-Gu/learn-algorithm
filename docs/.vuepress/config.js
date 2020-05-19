@@ -67,7 +67,7 @@ module.exports = {
       collapsable: false,
       sidebarDepth: 2,
       children: [
-
+        ['/graph/dfs-and-bfs', '深度优先与广度优先'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
