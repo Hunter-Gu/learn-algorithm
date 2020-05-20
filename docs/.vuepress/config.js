@@ -68,6 +68,7 @@ module.exports = {
       sidebarDepth: 2,
       children: [
         ['/graph/dfs-and-bfs', '深度优先与广度优先'],
+        ['/graph/string-search', '字符串匹配'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
