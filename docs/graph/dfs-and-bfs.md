@@ -6,23 +6,113 @@
 
 图上的搜索算法，最直接的理解就是：在图中找出从一个顶点出发，到另一个顶点的路径。
 
-以邻接表来存储图为例。图的代码实现如下：
+> 以下部分都以**邻接表**存储的**无向图**为例！
 
-<!-- TODO 代码 -->
+```ts
+// 无向图
+class Graph<T> {
+    // 顶点数量
+    public vertex = 0;
+
+    // 邻接表
+    public linkedList: T[]
+
+    constructor(vertex: number) {
+        this.vertex = vertex
+        this.linkedList = new Array(vertex)
+
+        for (let i = 0; i < vertex; i++) {
+            this.linkedList[i] = []
+        }
+    }
+
+    // 无向图一条边被两个顶点拥有，所以存两次
+    addEdge(s: number, t: number) {
+        this.linkedList[s].push(t)
+        this.linkedList[t].push(s)
+    }
+}
+```
 
 ## BFS
 
-先查找离起始顶点最近的，然后是次近的，依次往外搜索。如图：
+先查找离起始顶点最近的，然后是次近的，依次往外搜索。
+
+广度优先搜索是逐层访问的，只有把第 k 层的顶点都访问完成之后，才能访问第 k+1 层的顶点。
+
+当访问到第 k 层的顶点的时候，需要把第 k 层的顶点记录下来，之后通过第 k 层的顶点来找第 k+1 层的顶点。所以，这里要用队列来实现记录的功能。如图：
 
 ![BFS](@imgs/002e9e54fb0d4dbf5462226d946fa1ea.jpg)
 
-<!-- TODO 代码
-    s 表示起始顶点
-    t 表示终止顶点
-    面有三个重要的辅助变量 visited、queue、prev。只要理解这三个变量，读懂这段代码估计就没什么问题了。visited 是用来记录已经被访问的顶点，用来避免顶点被重复访问。如果顶点 q 被访问，那相应的 visited[q]会被设置为 true。queue 是一个队列，用来存储已经被访问、但相连的顶点还没有被访问的顶点。因为广度优先搜索是逐层访问的，也就是说，我们只有把第 k 层的顶点都访问完成之后，才能访问第 k+1 层的顶点。当我们访问到第 k 层的顶点的时候，我们需要把第 k 层的顶点记录下来，稍后才能通过第 k 层的顶点来找第 k+1 层的顶点。所以，我们用这个队列来实现记录的功能。prev 用来记录搜索路径。当我们从顶点 s 开始，广度优先搜索到顶点 t 后，prev 数组中存储的就是搜索的路径。不过，这个路径是反向存储的。prev[w]存储的是，顶点 w 是从哪个前驱顶点遍历过来的。比如，我们通过顶点 2 的邻接表访问到顶点 3，那 prev[3]就等于 2。为了正向打印出路径，我们需要递归地来打印，你可以看下 print() 函数的实现方式。
--->
+```ts
+function bfs(graph: Graph, start: number, end: number) {
+    if (start === end) return
 
-搜索一条从 s 到 t 的路径，实际上，这样求得的路径就是从 s 到 t 的最短路径。
+    const {vertex, linkedList} = graph
+    const visited = new Array(vertex).fill(false)
+    // 记录已经被访问的顶点，避免顶点被重复访问
+    // 如果顶点 q 被访问，那相应的 visited[q] 会被设置为 true
+    visited[start] = true
+
+    // 用来存储已经被访问、但相连的顶点还没有被访问的顶点
+    // 记录的是顶点的访问顺序
+    const queue = []
+    queue.push(start)
+
+    // 记录搜索路径（前驱节点，即是通过哪一个顶点搜索到的当前顶点）
+    // 从顶点 start 开始，广度优先搜索到顶点 end 后，prev 数组中存储的就是搜索的路径
+    // 注意，这个路径是反向存储的。prev[w] 存储的是，顶点 w 是从哪个前驱顶点遍历过来的
+    // 比如，通过顶点 2 的邻接表访问到顶点 3，那 prev[3] 就等于 2
+    // 所以为了正向打印出路径，需要递归打印
+    const prev = []
+    for (let i = 0; i < vertex; i++) {
+        prev[i] = -1
+    }
+
+    while (queue.length !== 0) {
+        const w = queue.shift();
+        // 当前节点的相邻顶点
+        const adjVertexs = linkedList[w];
+
+        // 遍历该节点的相邻顶点
+        for (let i = 0; i < adjVertexs.length; i++) {
+            const adjVertex = adjVertexs[i]
+            if (!visited[adjVertex]) {
+                prev[adjVertex] = w;
+                if (adjVertex === end) {
+                    print(prev, start, end);
+                    return;
+                }
+                visited[adjVertex] = true;
+                queue.push(adjVertex);
+            }
+        }
+    }
+}
+
+// 递归打印 s->t 的路径
+function print(prev: number[], start: number, end: number) {
+  if (prev[end] !== -1 && end !== start) {
+    print(prev, start, prev[end]);
+  }
+  console.log(t + " ");
+}
+
+// const g = new Graph(8);
+// g.addEdge(0, 1);
+// g.addEdge(0, 3);
+// g.addEdge(1, 2);
+// g.addEdge(1, 4);
+// g.addEdge(2, 5);
+// g.addEdge(3, 4);
+// g.addEdge(4, 5);
+// g.addEdge(4, 6);
+// g.addEdge(5, 7);
+// g.addEdge(6, 7);
+// bfs(g, 0, 6);
+```
+
+搜索一条从 start 到 end 的路径，实际上，这样求得的路径就是从 start 到 end 的最短路径。
 
 下面是 BFS 的分解图：
 
@@ -34,7 +124,7 @@
 
 ### 复杂度
 
-最坏情况下，终止顶点 t 离起始顶点 s 很远，需要遍历完整个图才能找到。这个时候，每个顶点都要进出一遍队列，每个边也都会被访问一次，所以，广度优先搜索的时间复杂度是 O(V+E)，其中，V 表示顶点的个数，E 表示边的个数。
+最坏情况下，终止顶点 end 离起始顶点 start 很远，需要遍历完整个图才能找到。这个时候，每个顶点都要进出一遍队列，每个边也都会被访问一次，所以，广度优先搜索的时间复杂度是 O(V+E)，其中，V 表示顶点的个数，E 表示边的个数。
 
 对于一个连通图来说，也就是说一个图中的所有顶点都是连通的，E 肯定要大于等于 V-1，所以，广度优先搜索的时间复杂度也可以简写为 O(E)。
 
