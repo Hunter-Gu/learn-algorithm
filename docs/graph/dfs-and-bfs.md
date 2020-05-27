@@ -6,15 +6,83 @@
 
 图上的搜索算法，最直接的理解就是：在图中找出从一个顶点出发，到另一个顶点的路径。
 
-以邻接表来存储图为例。图的代码实现如下：
+> 以下部分都以**邻接表**存储的**无向图**为例！
 
-<!-- TODO 代码 -->
+```ts
+// 无向图
+class Graph<T> {
+    // 顶点数量
+    public vertex = 0;
+
+    // 邻接表
+    public linkedList: T[]
+
+    constructor(vertex: number) {
+        this.vertex = vertex
+        this.linkedList = new Array(vertex)
+
+        for (let i = 0; i < vertex; i++) {
+            this.linkedList[i] = []
+        }
+    }
+
+    // 无向图一条边被两个顶点拥有，所以存两次
+    addEdge(s: number, t: number) {
+        this.linkedList[s].push(t)
+        this.linkedList[t].push(s)
+    }
+}
+```
 
 ## BFS
 
 先查找离起始顶点最近的，然后是次近的，依次往外搜索。如图：
 
 ![BFS](@imgs/002e9e54fb0d4dbf5462226d946fa1ea.jpg)
+
+```ts
+function bfs(graph: Graph, s: number, t: number) {
+    if (s === t) return
+
+    const {vertex, linkedList} = graph
+    const visited = new Array(vertex).fill(false)
+    // 按照索引存储
+    visited[s] = true
+
+    const queue = []
+    queue.push(s)
+
+    const prev = []
+    for (let i = 0; i < vertex; i++) {
+        prev[i] = -1
+    }
+
+    while (queue.length !== 0) {
+        const w = queue.pop();
+
+        for (let i = 0; i < linkedList[w].length; i++) {
+            const q = linkedList[w][i]
+            if (!visited[q]) {
+                prev[q] = w;
+                if (q == t) {
+                    print(prev, s, t);
+                    return;
+                }
+                visited[q] = true;
+                queue.push(q);
+            }
+        }
+    }
+}
+
+// 递归打印 s->t 的路径
+function print(prev: number[], s: number, t: number) {
+  if (prev[t] != -1 && t != s) {
+    print(prev, s, prev[t]);
+  }
+  console.log(t + " ");
+}
+```
 
 <!-- TODO 代码
     s 表示起始顶点
