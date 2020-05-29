@@ -138,15 +138,62 @@ function print(prev: number[], start: number, end: number) {
 
 那么如何在图中应用深度优先搜索，来找某个顶点到另一个顶点的路径？
 
-如图，搜索的起始顶点是 s，终止顶点是 t，我们希望在图中寻找一条从顶点 s 到顶点 t 的路径。如果映射到迷宫那个例子，s 就是你起始所在的位置，t 就是出口。我用深度递归算法，把整个搜索的路径标记出来了。这里面实线箭头表示遍历，虚线箭头表示回退。从我们可以看出，深度优先搜索找出来的路径，并不是顶点 s 到顶点 t 的最短路径：
+如图，搜索的起始顶点是 start，终止顶点是 end，要在图中寻找一条从顶点 start 到顶点 end 的路径。
 
 ![DFS](@imgs/8778201ce6ff7037c0b3f26b83efba85.jpg)
 
+映射到迷宫的例子，start 就是起始位置，end 就是出口，用深度递归算法，把整个搜索的路径标记出来了。
+
+- 实线箭头表示遍历
+- 虚线箭头表示回退
+
+可以看出，深度优先搜索找出来的路径，并不是顶点 start 到顶点 end 的最短路径。
+
 深度优先搜索用的是一种比较著名的算法思想：回溯思想。这种思想解决问题的过程，非常适合用递归来实现。
 
-<!-- TODO 代码 -->
+```ts
+// 全局变量或者类成员变量
+let found = false;
 
-我们发现，深度优先搜索代码实现也用到了 prev、visited 变量以及 print() 函数，它们跟广度优先搜索代码实现里的作用是一样的。不过，深度优先搜索代码实现里，有个比较特殊的变量 found，它的作用是，当我们已经找到终止顶点 t 之后，我们就不再递归地继续查找了。
+function dfs(graph: Graph, start: number, end: number) {
+    const {vertex, linkedList} = graph;
+
+    const visited = new Array(vertex).fill(false);
+
+    const prev = new Array(vertex);
+    for (let i = 0; i < vertex; i++) {
+        prev[i] = -1;
+    }
+
+    found = false;
+
+    recurDfs(graph, start, end, visited, prev);
+    print(prev, s, t);
+}
+
+function recurDfs(graph: Graph, start: number, end: number, visited: boolean[], prev: number[]) {
+    if (found == true) return;
+
+    visited[start] = true;
+
+    if (start === end) {
+        found = true;
+        return;
+    }
+
+    const { linkedList } = graph
+    for (int i = 0; i < linkedList[start].length; i++) {
+        int q = linkedList[start][i];
+        if (!visited[q]) {
+        prev[q] = start;
+        recurDfs(graph, q, end, visited, prev);
+        }
+    }
+}
+```
+
+- 深度优先搜索代码实现也用到了 prev、visited 变量以及 print() 函数，并且跟广度优先搜索代码实现里的作用是一样的
+- 深度优先搜索代码实现里，有个比较特殊的变量 found，作用是当找到终止顶点 end 之后，就不再递归地继续查找
 
 ### 复杂度
 
