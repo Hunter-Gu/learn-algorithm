@@ -158,8 +158,15 @@ let found = false;
 function dfs(graph: Graph, start: number, end: number) {
     const {vertex, linkedList} = graph;
 
+    // 记录已经被访问的顶点，避免顶点被重复访问
+    // 如果顶点 q 被访问，那相应的 visited[q] 会被设置为 true
     const visited = new Array(vertex).fill(false);
 
+    // 记录搜索路径（前驱节点，即是通过哪一个顶点搜索到的当前顶点）
+    // 从顶点 start 开始，广度优先搜索到顶点 end 后，prev 数组中存储的就是搜索的路径
+    // 注意，这个路径是反向存储的。prev[w] 存储的是，顶点 w 是从哪个前驱顶点遍历过来的
+    // 比如，通过顶点 2 的邻接表访问到顶点 3，那 prev[3] 就等于 2
+    // 所以为了正向打印出路径，需要递归打印
     const prev = new Array(vertex);
     for (let i = 0; i < vertex; i++) {
         prev[i] = -1;
@@ -168,11 +175,11 @@ function dfs(graph: Graph, start: number, end: number) {
     found = false;
 
     recurDfs(graph, start, end, visited, prev);
-    print(prev, s, t);
+    print(prev, start, end);
 }
 
 function recurDfs(graph: Graph, start: number, end: number, visited: boolean[], prev: number[]) {
-    if (found == true) return;
+    if (found === true) return;
 
     visited[start] = true;
 
@@ -182,11 +189,13 @@ function recurDfs(graph: Graph, start: number, end: number, visited: boolean[], 
     }
 
     const { linkedList } = graph
-    for (int i = 0; i < linkedList[start].length; i++) {
-        int q = linkedList[start][i];
-        if (!visited[q]) {
-        prev[q] = start;
-        recurDfs(graph, q, end, visited, prev);
+    // 当前节点的相邻顶点
+    const adjVertexs = linkedList[start];
+    for (let i = 0; i < adjVertexs.length; i++) {
+        let adjVertex = adjVertexs[i];
+        if (!visited[adjVertex]) {
+            prev[adjVertex] = start;
+            recurDfs(graph, adjVertex, end, visited, prev);
         }
     }
 }
@@ -197,15 +206,21 @@ function recurDfs(graph: Graph, start: number, end: number, visited: boolean[], 
 
 ### 复杂度
 
-从图中可以看出，每条边最多会被访问两次，一次是遍历，一次是回退。所以，图上的深度优先搜索算法的时间复杂度是 O(E)，E 表示边的个数。深度优先搜索算法的消耗内存主要是 visited、prev 数组和递归调用栈。visited、prev 数组的大小跟顶点的个数 V 成正比，递归调用栈的最大深度不会超过顶点的个数，所以总的空间复杂度就是 O(V)。
+从图中可以看出，每条边最多会被访问两次，一次是遍历，一次是回退。所以，图上的深度优先搜索算法的时间复杂度是 O(E)，E 表示边的个数。
+
+深度优先搜索算法的消耗内存主要是 visited、prev 数组和递归调用栈。visited、prev 数组的大小跟顶点的个数 V 成正比，递归调用栈的最大深度不会超过顶点的个数，所以总的空间复杂度就是 O(V)。
 
 ## 思考
 
 ### 如何找出社交网络中某个用户的三度好友关系？
 
-社交网络可以用图来表示。这个问题就非常适合用图的广度优先搜索算法来解决，因为广度优先搜索是层层往外推进的。首先，遍历与起始顶点最近的一层顶点，也就是用户的一度好友，然后再遍历与用户距离的边数为 2 的顶点，也就是二度好友关系，以及与用户距离的边数为 3 的顶点，也就是三度好友关系。我们只需要稍加改造一下广度优先搜索代码，用一个数组来记录每个顶点与起始顶点的距离，非常容易就可以找出三度好友关系。
+这个问题非常适合用图的广度优先搜索算法来解决。
 
+因为社交网络可以用图来表示，并且广度优先搜索是层层往外推进的：
 
-### 我们通过广度优先搜索算法解决了开篇的问题，你可以思考一下，能否用深度优先搜索来解决呢？
+- 首先，遍历与起始顶点最近的一层顶点，也就是用户的一度好友
+- 然后再遍历与用户距离的边数为 2 的顶点，也就是二度好友关系，以及与用户距离的边数为 3 的顶点，也就是三度好友关系
 
-### 学习数据结构最难的不是理解和掌握原理，而是能灵活地将各种场景和问题抽象成对应的数据结构和算法。今天的内容中提到，迷宫可以抽象成图，走迷宫可以抽象成搜索算法，你能具体讲讲，如何将迷宫抽象成一个图吗？或者换个说法，如何在计算机中存储一个迷宫？
+#### 能否用深度优先搜索来解决呢？
+
+### 具体讲讲如何将迷宫抽象成一个图？或者换个说法，如何在计算机中存储一个迷宫？
