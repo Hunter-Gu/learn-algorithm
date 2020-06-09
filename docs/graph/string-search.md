@@ -28,6 +28,7 @@ function bf(main: string, pattern: string) {
   for (let i = 0; i <= endIndex; i++) {
     for (let j = 0; j < pattern.length; j++) {
       if (pattern[j] !== main[i + j]) break
+      if (j !== pattern.length - 1) continue
       return {
         start: i + j,
         end: i + j + pattern.length
