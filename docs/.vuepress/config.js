@@ -68,7 +68,24 @@ module.exports = {
       sidebarDepth: 2,
       children: [
         ['/graph/dfs-and-bfs', '深度优先与广度优先'],
-        ['/graph/string-search', '字符串匹配'],
+      ]
+    }, {
+      title: '字符串匹配',
+      path: '/string-search/',
+      collapsable: false,
+      sidebarDepth: 2,
+      children: [
+        ['/string-search/string-search', 'BF & RK & BM & KMP'],
+        ['/string-search/trie', 'trie 树'],
+        ['/string-search/ac-automation', 'AC 自动机'],
+      ]
+    }, {
+      title: '算法思想',
+      path: '/thought/',
+      collapsable: false,
+      sidebarDepth: 2,
+      children: [
+        ['/thought/greedy', '贪心算法'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
