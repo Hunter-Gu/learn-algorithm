@@ -66,6 +66,52 @@ RK 算法的思路：通过哈希算法对主串中的 n - m + 1 个子串分别
 - 把 a ～ z 这 26 个字符映射到 0 ～ 25 这 26 个数字，a 就表示 0，b 就表示 1，以此类推，z 表示 25
 - 将二十六进制转换为十进制，就是哈希值
 
+```ts
+const primeBase = 26;
+
+function searchRabinKarp(main: string, pattern: string) {
+  const matches = [];
+
+  // 模式串 hash
+  const hashPattern = hashFromTo(pattern, 0, pattern.length);
+  const primeToPower = Math.pow(primeBase, pattern.length);
+  // 子串 hash
+  let hashTextPart = hashFromTo(main, 0, pattern.length);
+  let maxIndexForPotentialMatch = main.length - pattern.length;
+
+  for (let i = 0; i <= maxIndexForPotentialMatch; i++) {
+    if (hashTextPart === hashPattern) {
+      if (matchesAtIndex(i, main, pattern)) {
+        matches.push(i);
+      }
+    }
+    hashTextPart = primeBase * hashTextPart - primeToPower * main.charCodeAt(i) + main.charCodeAt(i + pattern.length);
+  }
+
+  return matches;
+}
+
+function matchesAtIndex(index: number, main: string, pattern: string) {
+  let matches = true;
+
+  for (let j = 0; j < pattern.length; j++) {
+    if (main[index + j] !== pattern[j]) {
+      matches = false;
+      break;
+    }
+  }
+  return matches;
+}
+
+function hashFromTo(str: string, from: number, to: number) {
+  let hash = 0;
+  for (let i = from; i < to && i < str.length; i++) {
+    hash = primeBase * hash + str.charCodeAt(i);
+  }
+  return hash;
+}
+```
+
 ![Hash 算法](@imgs/d5c1cb11d9fc97d0b28513ba7495ab04.jpg)
 
 > 为了方便解释，在下面的讲解中，假设字符串中只包含 a～z 这 26 个小写字符，用二十六进制来表示一个字符串，对应的哈希值就是二十六进制数转化成十进制的结果。
