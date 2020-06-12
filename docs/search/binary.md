@@ -115,18 +115,30 @@ function binarySearch<T>(arr: T[], target: T) {
 
 数据量太大也不适合二分查找。
 
-二分查找的底层需要依赖数组这种数据结构，而**数组要求内存空间连续，对内存的要求比较苛刻**。比如，我们有 1GB 大小的数据，如果希望用数组来存储，那就需要 1GB 的连续内存空间。注意这里的“连续”二字，也就是说，即便有 2GB 的内存空间剩余，但是如果这剩余的 2GB 内存空间都是零散的，没有连续的 1GB 大小的内存空间，那照样无法申请一个 1GB 大小的数组。而我们的二分查找是作用在数组这种数据结构之上的，所以太大的数据用数组存储就比较吃力了，也就不能用二分查找了。
+二分查找的底层需要依赖数组这种数据结构，而**数组要求内存空间连续，对内存的要求比较苛刻**。
+
+比如，我们有 1GB 大小的数据，如果希望用数组来存储，那就需要 1GB 的连续内存空间。注意这里的“连续”二字，也就是说，即便有 2GB 的内存空间剩余，但是如果这剩余的 2GB 内存空间都是零散的，没有连续的 1GB 大小的内存空间，那照样无法申请一个 1GB 大小的数组。
+
+二分查找是作用在数组这种数据结构之上的，所以太大的数据用数组存储就比较吃力了，也就不能用二分查找了。
 
 ## 思考
 
 ### 查找某个值
 
-假设我们有 1000 万个整数数据，每个数据占 8 个字节，如何设计数据结构和算法，快速判断某个整数是否出现在这 1000 万数据中？我们希望这个功能不要占用太多的内存空间，最多不要超过 100MB，怎么做呢？
+假设我们有 1000 万个整数数据，每个数据占 8 个字节，如何设计数据结构和算法，快速判断某个整数是否出现在这 1000 万数据中？
+
+希望这个功能不要占用太多的内存空间，最多不要超过 100MB，怎么做呢？
 
 分析：每个数据大小是 8 字节，最简单的办法就是将数据存储在数组中，内存占用差不多是 80MB，符合内存的限制 100 MB。
 
 - 先对这 1000 万数据从小到大排序
 - 然后再利用二分查找算法，就可以快速地查找想要的数据了
+
+```ts
+function quickSort() {}
+
+function binarySearch() {}
+```
 
 ### 求解平方根
 
@@ -136,34 +148,32 @@ function binarySearch<T>(arr: T[], target: T) {
 
 - 整数查找很简单，判断当前数小于+1后大于即可找到
 - 小数查找举查找小数后第一位来说，从 x.0 到 (x+1).0，查找终止条件与整数一样，当前数小于，加 0.1 大于
-- 后面的位数以此类推，可以用 x*10^(-i) 通项来循环或者递归，终止条件是 i > 6
+- 后面的位数以此类推，可以用 x * 10 ^ (-i) 通项来循环或者递归，终止条件是 i > 6
 
 ```ts
 function sqrt(num: number, prec = 0) {
-  let start = 0,
-    end = num
-  const bitCalc = (num, unit = 1) => {
-    while (end >= start) {
-      const middle = Math.floor((end - start) / 2) + start
-      const square = middle * middle
-      // TODO
-      if (square === num || (square < num && (middle + unit) * (middle + unit) > num)) {
-        return middle
-      } else if (square > num) {
-        end = middle - unit
-      } else {
-        start = middle + unit
-      }
+    const calcBit = (base, step = 1) => {
+        for (let i = base; i < num; i = i + step) {
+            const j = i + step
+
+            if (j * j > num && i * i <= num) {
+                return i - base
+            }
+        }
     }
-  }
 
-  let value = 0
-  for (let i = 0; i < 7; i++) {
-    value += bitCalc(num, Math.pow(1, -i))
-  }
+    let acc = 0
+    let coeff = 1
+    for (let i = 0; i < prec + 1; i++) {
+        acc += +(calcBit(acc, coeff)).toFixed(i)
+        coeff *= 0.1
+    }
 
-  return value
+    return acc
 }
+
+console.log('calc result:', sqrt(2, 17))
+console.log('Math.sqrt():', Math.sqrt(2))
 ```
 
 想了一下复杂度，每次二分是logn，包括整数位会查找7次，所以时间复杂度为7logn。空间复杂度没有开辟新的储存空间，空间复杂度为1。
