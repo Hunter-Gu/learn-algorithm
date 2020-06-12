@@ -86,6 +86,9 @@ module.exports = {
       sidebarDepth: 2,
       children: [
         ['/thought/greedy', '贪心算法'],
+        ['/thought/divide-and-conquer', '分治思想'],
+        ['/thought/back-tracking', '回溯算法'],
+        ['/thought/dynamic-programming', '动态规划'],
       ]
     }],
     repo: 'Hunter-Gu/learn-algorithm',
