@@ -78,7 +78,7 @@ function cal(num: number) {
 
 #### 多项式量级
 
-- O(n)                      常量阶
+- O(1)                      常量阶
 - O(logn)                   对数阶
 - O(n)                      线性阶
 - O(n * logn)               线性对数阶
@@ -296,24 +296,27 @@ function assignOrSum(num: number) {
 
 ```ts
 // 全局变量，大小为10的数组array，长度len，下标i。
-int array[] = new int[10];
-int len = 10;
-int i = 0;
+let array = [];
+array.length = 10;
+let len = array.length;
+let i = 0;
 
 // 往数组中添加一个元素
-void add(int element) {
-   if (i >= len) { // 数组空间不够了
-     // 重新申请一个2倍大小的数组空间
-     int new_array[] = new int[len*2];
-     // 把原来array数组中的数据依次copy到new_array
-     for (int j = 0; j < len; ++j) {
-       new_array[j] = array[j];
+function add(element: number) {
+  // 数组空间不够了
+  if (i >= len) {
+    // 重新申请一个 2 倍大小的数组空间
+     let newArray[] = [];
+     newArray.length = len * 2;
+     // 把原来 array 数组中的数据依次 copy 到newArray
+     for (let j = 0; j < len; ++j) {
+       newArray[j] = array[j];
      }
-     // new_array复制给array，array现在大小就是2倍len了
-     array = new_array;
+     // newArray 赋值给 array，array 现在大小就是2倍len了
+     array = newArray;
      len = 2 * len;
    }
-   // 将element放到下标为i的位置，下标i加一
+   // 将 element 放到下标为i的位置，下标 i 加一
    array[i] = element;
    ++i;
 }
