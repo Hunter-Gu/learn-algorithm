@@ -6,10 +6,10 @@
 
 以下数据结构都是线性表结构：
 
-- 数组
-- 链表
-- 队列
-- 栈
+- [数组](.array.md)
+- [链表](./linked-list.md)
+- [栈](./stack.md)
+- [队列](./queue.md)
 
 ![线性表结构](@imgs/b6b71ec46935130dff5c4b62cf273477.jpg)
 
@@ -19,8 +19,8 @@
 
 以下数据结构都是非线性表结构：
 
-- 树
-- 图
+- [树](../tree/README.md)
+- [图](../graph/README.md)
 
 ![非线性表结构](@imgs/6ebf42641b5f98f912d36f6bf86f6569.jpg)
 
