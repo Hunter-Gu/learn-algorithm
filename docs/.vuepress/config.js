@@ -16,7 +16,12 @@ module.exports = {
         ['/basic/analysis-of-algorithm', '复杂度分析'],
         ['/basic/list', '线性表 & 非线性表'],
         ['/basic/array', '数组'],
+
         ['/basic/linked-list', '链表'],
+        ['/basic/linked-list/singly-linked-list.md', '单链表'],
+        ['/basic/linked-list/circular-linked-list.md', '循环链表'],
+        ['/basic/linked-list/doubly-linked-list.md', '双向链表'],
+
         ['/basic/stack', '栈'],
         ['/basic/queue', '队列'],
         ['/basic/recursion', '递归'],
