@@ -6,7 +6,7 @@
 
 以下数据结构都是线性表结构：
 
-- [数组](.array.md)
+- [数组](./array.md)
 - [链表](./linked-list.md)
 - [栈](./stack.md)
 - [队列](./queue.md)
