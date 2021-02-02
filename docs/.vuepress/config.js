@@ -21,6 +21,7 @@ module.exports = {
         ['/basic/linked-list/singly-linked-list.md', '单链表'],
         ['/basic/linked-list/circular-linked-list.md', '循环链表'],
         ['/basic/linked-list/doubly-linked-list.md', '双向链表'],
+        ['/basic/linked-list/questions.md', '链表常见问题'],
 
         ['/basic/stack', '栈'],
         ['/basic/queue', '队列'],
