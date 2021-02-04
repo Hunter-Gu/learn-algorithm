@@ -86,3 +86,31 @@ AC = ( k - 1) * R + BC
 ## 两个链表相交，求交点
 
 ![](@imgs/dkjdlfjp042095e.png)
+
+## 合并两个有序链表
+
+## 删除链表倒数第 n 个结
+
+```ts
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+    let dummy = new ListNode()
+    dummy.next = head
+
+    let fast = dummy
+    let slow = dummy
+
+    while (n && fast.next) {
+        n--
+        fast = fast.next
+    }
+
+    while (fast.next) {
+        fast = fast.next
+        slow = slow.next
+    }
+
+    slow.next = slow.next.next
+
+    return dummy.next
+}
+```

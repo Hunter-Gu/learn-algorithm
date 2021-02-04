@@ -20,6 +20,8 @@
 - 顺序队列：用数组实现
 - 链式队列：用链表实现
 
+### 顺序队列
+
 ```ts
 interface Queue<T> {
   enqueue(value: T): boolean;
@@ -64,7 +66,11 @@ class ArrayQueue<T> implements Queue<T> {
     return tmp;
   }
 }
+```
 
+### 链式队列
+
+```ts
 class LinkedListNode<T> {
   data: T = null;
   next: LinkedListNode<T> = null;
@@ -126,7 +132,7 @@ class LinkedListQueue implements Queue<T> {
 
 当 tail 移动到最右边，即使数组中还有空闲空间，也无法继续往队列中添加数据了。这个问题该如何解决呢？
 
-**数据搬移**！
+### 数据搬移
 
 - 如果每次出队都删除数组下标为 0 的数据，此时需要搬移整个队列中的数据，这样出队操作的时间复杂度就会从原来的 O(1) 变为 O(n)
 - 实际上，出队时可以先不搬移数据，等到没有空闲空间了，再在入队时，集中触发一次数据的搬移操作
