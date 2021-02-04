@@ -8,7 +8,7 @@
 - 删除链表倒数第 n 个结点
 - 求链表的中间结点
 
-## 单链表反转
+## 单链表反转 - 206
 
 ```ts
 function reverse<T>(linkedList: LinkedList<T>) {
@@ -83,13 +83,42 @@ AC = ( k - 1) * R + BC
 - fast 从 B 点出发以速度 1 前进
 - slow 到 C 点时，fast 也必然到 C 点
 
-## 两个链表相交，求交点
+## 两个链表相交，求交点 括号匹配 leetcode-160
 
 ![](@imgs/dkjdlfjp042095e.png)
 
-## 合并两个有序链表
+## 合并两个有序链表 leetcode-21
 
-## 删除链表倒数第 n 个结
+```ts
+function mergeTwoLists(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+  let prevHead = new ListNode
+  let prev = prevHead
+
+  while (l1 && l2) {
+    let tmp
+    if (l1.val < l2.val) {
+      tmp = l1
+      l1 = l1.next
+    } else {
+      tmp = l2
+      l2 = l2.next
+    }
+
+    prev.next = tmp
+    prev = prev.next
+
+    if (!prevHead) {
+      prevHead = tmp
+    }
+  }
+
+  prev.next = l1 ? l1 : l2
+
+  return prevHead.next
+}
+```
+
+## 删除链表倒数第 n 个结 括号匹配 leetcode-19
 
 ```ts
 function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
@@ -114,3 +143,7 @@ function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
     return dummy.next
 }
 ```
+
+## 求链表的中间节点
+
+快慢指针。
