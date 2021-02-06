@@ -151,75 +151,90 @@ function add(x: number, y: number) {
 
 所以根本上，只要能保证每进入一个新的函数，都是一个新的作用域就可以。而要实现这个，用栈就非常方便。在进入被调用函数的时候，分配一段栈空间给这个函数的变量，在函数结束的时候，将栈顶复位，正好回到调用函数的作用域内。
 
-### 表达式求值
+### 求逆波兰表达式
 
-编译器利用栈来实现表达式求值，是栈的另一个常见的应用场景。
+- 两个栈 S1, S2
+  - S1 放运算符，高优先级在上（最底下优先级最低）
+  - S2 放操作数
+- 从左开始
+  - '(' 直接放入 S1
+  - ')' 依次取出所有到 '(' 间的运算符，放入 S2
+  - 操作符优先级高于 S1 栈顶操作符，直接放入；否则依次取出，直到优先级高于操作符
+- S2 逆序处理，S1 顺序处理
 
-以只包含加减乘除四则运算为例，比如：3 + 5 * 8 - 6
+![](@imgs/20200809004428479ry131nrkn12.png)
 
-通过两个栈即可实现：
+### 逆波兰表达式求值 括号匹配 leetcode-150
 
-- 保存操作数的栈
-- 保存运算符的栈
-
-![表达式求值](@imgs/bc77c8d33375750f1700eb7778551600.jpg)
-
-从左向右遍历表达式：
-
-- 当遇到数字，直接入栈
-- 当遇到运算符，与运算符栈的栈顶元素进行比较
-  1. 优先级比运算符栈顶元素高，当前运算符压入栈
-  2. 优先级比运算符栈顶元素低或者相同，从运算符栈中取栈顶运算符，从操作数栈的栈顶取 2 个操作数进行计算，再把计算完的结果压入操作数栈，继续比较
+![逆波兰表达式](@imgs/0d37e629733b94611e6412fb24c1a032d7230d86d9c2ae80d8d2aebb3e3f18c3-image.png)
 
 ```ts
-function calc(exp: string) {
-  const PRIORITY  = ['+', '-'];
-  const numbers = new ArrayStack<number>(100);
-  const operators = new ArrayStack<string>(100);
-
-  for (let i = 0; i < exp.length; i++) {
-    const s = exp[i];
-    if (typeof Number(s) === 'number') {
-      numbers.push(Number(s));
-    } else {
-      const top = operators.pop();
-
-      if (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) === -1) {
-        operators.push(top);
-        operators.push(s);
-      } else {
-        const left = numbers.pop();
-        const right = numbers.pop();
-        const res = left + s + right;
-        numbers.push(res + top + numbers.pop());
-      }
-
-      // if ((PRIORITY.indexOf(top) === -1 && PRIORITY.indexOf(s) === -1)
-      //   || (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) !== -1))
-      // {
-      //   // 优先级相同，直接计算
-      //   const left = numbers.pop();
-      //   const right = numbers.pop();
-      //   const res = left + s + right;
-      //   numbers.push(res + top + numbers.pop());
-      // // } else if (PRIORITY.indexOf(top) === -1 && PRIORITY.indexOf(s) !== -1) {
-      //   // 顶部优先级高
-
-      // } else if (PRIORITY.indexOf(top) !== -1 && PRIORITY.indexOf(s) === -1) {
-      //   operators.push(top);
-      //   operators.push(s);
-      // }
+function evalRPN(tokens: string[]): number {
+    const OPERATIONS = {
+        '+': (a: string, b: string) => Number(a) + Number(b),
+        '-': (a: string, b: string) => Number(a) - Number(b),
+        '*': (a: string, b: string) => Number(a) * Number(b),
+        '/': (a: string, b: string) => Number(b) ? parseInt(Number(a) / Number(b) + '') : 0,
     }
-  }
-}
+    const isOperator = (s: string) => s in OPERATIONS
+    const stack = []
+    let value = ''
+
+    while (value = tokens.shift()) {
+        if (isOperator(value)) {
+            const a = stack.pop()
+            const b = stack.pop()
+            // 注意位置，因为栈是先进后出，所以应该 b 在前
+            stack.push(OPERATIONS[value](b, a))
+        } else {
+            stack.push(value)
+        }
+    }
+
+    return stack[0]
+};
 ```
 
-### 括号匹配
+### 表达式求值
+
+- 先求逆波兰表达式
+- 再对逆波兰表达式求值
+
+### 括号匹配 leetcode-20
 
 用栈来保存未匹配的左括号，从左到右依次扫描字符串。
 
 - 当扫描到左括号时，则将其压入栈中；
 - 当扫描到右括号时，从栈顶取出一个左括号。如果能够匹配，继续扫描剩下的字符串。
+
+```ts
+function isValid(s: string): boolean {
+    const RIGHT_PAIRS = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+    }
+    const stack = []
+    let value = ''
+
+    while (value = s.slice(0, 1)) {
+        s = s.slice(1)
+
+        if (value in RIGHT_PAIRS) {
+            const top = stack.slice(-1)[0]
+            if (top === RIGHT_PAIRS[value]) {
+                stack.pop()
+            } else {
+                stack.push(value)
+            }
+        } else {
+            stack.push(value)
+        }
+    }
+
+    return !stack.length
+};
+```
 
 ### 浏览器前进后退
 
@@ -228,10 +243,18 @@ function calc(exp: string) {
 - 顺序查看页面时，只需要依次入栈
 - 点击后退按钮，则只需要出栈，并将该页面压入另一个栈
 
-## 题目
-
-Leetcode: 20,155,232,844,224,682,496
-
 ## 问题
 
-我们都知道，JVM 内存管理中有个“堆栈”的概念。栈内存用来存储局部变量和方法调用，堆内存用来存储 Java 中的对象。那 JVM 里面的“栈”跟我们这里说的“栈”是不是一回事呢？如果不是，那它为什么又叫作“栈”呢？
+### Leetcode: 20, 155, 232, 844, 224, 682, 496
+
+### 内存中的堆栈？
+
+内存中的堆栈和数据结构堆栈不是一个概念，内存中的堆栈是真实存在的物理区，数据结构中的堆栈是抽象的数据存储结构。
+
+内存空间在逻辑上分为三部分：
+
+- 代码区：存储方法体的二进制代码。高级调度（作业调度）、中级调度（内存调度）、低级调度（进程调度）控制代码区执行代码的切换
+- 静态数据区：存储全局变量、静态变量、常量，常量包括final修饰的常量和String常量。系统自动分配和回收
+- 动态数据区
+  - 栈区：存储运行方法的形参、局部变量、返回值。由系统自动分配和回收
+  - 堆区：new 一个对象的引用或地址存储在栈区，指向该对象存储在堆区中的真实数据
