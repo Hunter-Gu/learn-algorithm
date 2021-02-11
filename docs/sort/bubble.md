@@ -172,5 +172,5 @@ function bubbleSortForLinkedList<T>(linkedList: LinkedList<T>) {
 
 可以看到，相对于数组实现而言，比较次数一致，但交换时操作更复杂。所以：
 
-- 时间复杂度仍未 O(n^2)
+- 时间复杂度仍为 O(n^2)
 - 空间复杂度仍为 O(1)
