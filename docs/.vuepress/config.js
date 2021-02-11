@@ -35,6 +35,7 @@ module.exports = {
       children: [
         ['/sort/bubble', '冒泡排序'],
         ['/sort/insertion', '插入排序'],
+        ['/sort/shell', '希尔排序'],
         ['/sort/selection', '选择排序'],
         ['/sort/merge', '归并排序'],
         ['/sort/quick', '快速排序'],
