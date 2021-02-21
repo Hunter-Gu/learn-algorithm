@@ -30,3 +30,11 @@
   - 节点的深度：根节点到这个节点，所经历的边的个数
 - 层数：与深度的计算类似，从 1 开始计
   - 节点的层数：深度 + 1
+
+## 分类
+
+- [二叉树](./binary-tree.md)
+- [二叉查找树](./binary-search-tree.md)
+- [红黑树](./red-black-tree.md)
+- [递归树](./recursion-tree.md)
+- [堆](./heap.md)

@@ -34,7 +34,7 @@ function binarySearch<T>(arr: T[], target: T) {
     start: number,
     end: number
   ): number | null => {
-    const middle = Math.floor((end - start) / 2) + start;
+    const middle = (end - start >> 1) + start;
 
     if (start === end) {
       return arr[middle] !== target ? -1 : middle;
@@ -58,10 +58,10 @@ function binarySearch<T>(arr: T[], target: T) {
 ```ts
 function binarySearch<T>(arr: T[], target: T) {
   let lowIdx = 0,
-    highIdx = arr.length - 1;
+      highIdx = arr.length - 1;
 
   while (highIdx >= lowIdx) {
-    const middle = Math.floor((highIdx - lowIdx) / 2) + lowIdx;
+    const middle = (highIdx - lowIdx >> 1) + lowIdx;
     if (target === arr[middle]) {
       return middle;
     } else if (target > arr[middle]) {
@@ -146,10 +146,10 @@ function binarySearchForFirst(arr: number[], target: number) {
     let middle = (lowIdx + highIdx) >> 1;
 
     if (arr[middle] > target)
-      highIdx = middle;
+      highIdx = middle - 1;
     else if (arr[middle] < target)
-      lowIdx = middle;
-    else if (middle === 0 || arr[middle - 1] !== arr[middle])
+      lowIdx = middle + 1;
+    else if (middle === 0 || arr[middle - 1] !== arr[middle]) // 当前元素和前一个元素不等
       return middle;
     else
       highIdx = middle - 1;
@@ -169,13 +169,13 @@ function binarySearchForLast(arr: number[], target: number) {
   let highIdx = arr.length - 1;
 
   while (lowIdx <= highIdx) {
-    let middle = ~~((lowIdx + highIdx) / 2);
+    let middle = (lowIdx + highIdx) >> 1;
 
     if (arr[middle] > target)
-      highIdx = middle;
+      highIdx = middle - 1;
     else if (arr[middle] < target)
-      lowIdx = middle;
-    else if (middle === arr.length || arr[middle + 1] !== arr[middle])
+      lowIdx = middle + 1;
+    else if (middle === arr.length || arr[middle + 1] !== arr[middle]) // 当前元素和后一个元素不等
       return middle;
     else
       lowIdx = middle + 1;
@@ -193,10 +193,10 @@ function binarySearchForFirst(arr: number[], target: number) {
   let highIdx = arr.length - 1;
 
   while (lowIdx <= highIdx) {
-    let middle = ~~((lowIdx + highIdx) / 2);
+    let middle = (lowIdx + highIdx) >> 1;
 
     if (arr[middle] >= target)
-      if (middle === 0 || arr[middle - 1] < value) return middle;
+      if (middle === 0 || arr[middle - 1] < target) return middle;
       else highIdx = middle - 1;
     else lowIdx = middle + 1;
   }
@@ -213,7 +213,7 @@ function binarySearchForFirst(arr: number[], target: number) {
   let highIdx = arr.length - 1;
 
   while (lowIdx <= highIdx) {
-    let middle = ~~((lowIdx + highIdx) / 2);
+    let middle = (lowIdx + highIdx) >> 1;
 
     if (arr[middle] <= target)
       if (middle === arr.length - 1 || arr[middle + 1] > target)
@@ -255,38 +255,44 @@ function binarySearch() {}
 
 分析：因为要精确到后六位，可以先用二分查找出整数位，然后再二分查找小数第一位，第二位，...，一直到第六位。
 
-- 整数查找很简单，判断当前数小于+1 后大于即可找到
-- 小数查找举查找小数后第一位来说，从 x.0 到 (x+1).0，查找终止条件与整数一样，当前数小于，加 0.1 大于
+- 整数查找很简单
+  - 判断当前数小于，加一后大于即可找到
+- 小数查找
+  - 以查找小数后第一位来说，从 x.0 到 (x+1).0，查找终止条件与整数一样，当前数小于，加 0.1 大于
 - 后面的位数以此类推，可以用 x \* 10 ^ (-i) 通项来循环或者递归，终止条件是 i > 6
 
 ```ts
-// TODO
-function sqrt(num: number, prec = 0) {
-  const calcBit = (base, step = 1) => {
-    for (let i = base; i < num; i = i + step) {
-      const j = i + step;
-
-      if (j * j > num && i * i <= num) {
-        return i - base;
-      }
-    }
-  };
-
-  let acc = 0;
-  let coeff = 1;
-  for (let i = 0; i < prec + 1; i++) {
-    acc += +calcBit(acc, coeff).toFixed(i);
-    coeff *= 0.1;
-  }
-
-  return acc;
+function square(num: number) {
+  return num * num;
 }
 
-console.log('calc result:', sqrt(2, 17));
-console.log('Math.sqrt():', Math.sqrt(2));
-```
+function sqrt(num: number, prec = 0) {
+  // 计算整数部分
+  // 计算小数部分
+  let value = num >> 1
+  let increment = 10
+  for (let i = 0; i <= prec; i++) {
+    increment /= 10
+    let base = increment
+    while (true) {
+      // 小数相加会有精度丢失的问题
+      const tempValue = value + base
+      if (square(tempValue) <= num && square(tempValue + increment) > num) {
+        value = tempValue
+        break
+      }
 
-想了一下复杂度，每次二分是 logn，包括整数位会查找 7 次，所以时间复杂度为 7logn。空间复杂度没有开辟新的储存空间，空间复杂度为 1。
+      if (square(tempValue) <= num) {
+        base += increment
+      } else {
+        base -= increment
+      }
+    }
+  }
+
+  return value
+}
+```
 
 ### 链表的二分法
 
@@ -344,18 +350,18 @@ function search(nums: number[], target: number): number {
     highIdx = nums.length - 1;
 
   while (lowIdx <= highIdx) {
-    let middleIdx = ~~((lowIdx + highIdx) / 2);
+    let middleIdx = lowIdx + highIdx >> 1;
 
     if (target === nums[middleIdx])
       return middleIdx;
     if (nums[lowIdx] <= nums[middleIdx]) {
       if (target <= nums[middleIdx] && target >= nums[lowIdx])
-        highIdx = middleIdx;
+        highIdx = middleIdx - 1;
       else
         lowIdx = middleIdx + 1;
     } else {
       if (target >= nums[middleIdx] && target <= nums[highIdx])
-        lowIdx = middleIdx;
+        lowIdx = middleIdx + 1;
       else
         highIdx = middleIdx - 1;
     }
