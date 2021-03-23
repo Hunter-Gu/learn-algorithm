@@ -208,9 +208,44 @@ Leetcode: 206，141，21，19，876 TODO
 
 ## 思考
 
-- 如何判断一个字符串是否是回文字符串？
+### 如何判断一个字符串是否是回文字符串？
 
-- 如果字符串是通过单链表来存储的，那该如何来判断是一个回文串呢？相应的时间空间复杂度又是多少呢？
+```ts
+function isPalindrome(s: string): boolean {
+  let left = 0,
+      right = s.length - 1
+
+  const reg = /[a-z0-9]/i
+
+  while (left < right) {
+    while (!reg.test(s[left])) {
+      left++
+      if (left >= s.length) {
+          return true
+      }
+    }
+
+    while (!reg.test(s[right])) {
+      right--
+      if (right < 0) {
+          return true
+      }
+    }
+
+    if (s[left].toLowerCase() !== s[right].toLowerCase()) {
+      return false
+    }
+    left++
+    right--
+  }
+
+  return true
+}
+```
+
+### 如果字符串是通过单链表来存储的，那该如何来判断是一个回文串呢？相应的时间空间复杂度又是多少呢？
+
+
 
 - 是否还能够想到其他场景，利用哨兵可以大大地简化编码难度？
 
