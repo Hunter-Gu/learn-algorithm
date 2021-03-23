@@ -36,38 +36,43 @@
 往堆中插入一个元素后，需要让它继续满足堆的两个特性。
 
 ```ts
-class Heap<T> {
+class Heap {
 
-  private readonly root = 1;
+  rootIdx = 1;
 
-  private arr!: T[];
+  count = 0;
 
-  private count = 0;
+  arr: number[] = []
 
   constructor(rootData: T, size: number) {
-    this.arr = new Array(size + this.root).fill(null));
-    this.arr[this.root] = rootData;
-    this.count += 1;
+    this.arr = new Array(size + this.rootIdx)
+    this.arr[this.rootIdx] = rootData
+    this.count++
   }
 
-  insert(data: T) {
-    // 堆满
-    if (this.count >= arr.length - 1) return
+  insert(data: number) {
+    if (this.count >= this.arr.length - this.rootIdx) {
+      return
+    }
 
-    this.count += 1;
-    this.arr[this.count] = data;
+    this.count++
+    this.arr[this.count] = data
 
     let idx = this.count,
         parentIdx = Math.floor(this.count / 2)
-    // 从下往上堆化
+
     while (parentIdx > 0 && this.arr[i] > this.arr[parentIdx]) {
-      const tmp = this.arr[i]
-      this.arr[i] = this.arr[parentIdx]
-      this.arr[parentIdx] = tmp
+      swap(arr, i, parentIdx)
       idx = parentIdx
-      parentIdx = Math.floor(idx / 2)
+      parentIdx = ~~(parentIdx / 2)
     }
   }
+}
+
+function swap<T>(arr: T[], i: number, j: number) {
+  const tmp = arr[i]
+  arr[i] = arr[j]
+  arr[j] = tmp
 }
 ```
 
@@ -90,43 +95,46 @@ class Heap<T> {
 ![从下往上堆叠](@imgs/110d6f442e718f86d2a1d16095513260.jpg)
 
 ```ts
-class Heap<T> {
+class Heap {
+  count = 0
 
-  private readonly root = 1;
+  arr: number[] = []
 
-  private arr!: T[];
+  rootIdx = 1
 
-  private count = 0;
-
-  constructor(rootData: T, size: number) {
-    this.arr = new Array(size + this.root).fill(null));
-    this.arr[this.root] = rootData;
-    this.count += 1;
+  constructor(rootData: number, size) {
+    this.arr = new Array(this.rootIdx + size);
+    this.arr[this.rootIdx] = rootData
+    this.count++
   }
 
   removeMax() {
     if (this.count === 0) return
 
-    this.count -= 1
-
-    heapify(this.arr, this.root)
+    this.arr[this.rootIdx] = arr[count]
+    this.count--
+    this.heapify(this.arr, this.count, this.rootIdx)
   }
 
-  // 从上向下堆化
-  heapify(arr: T[], idx: number, size: number) {
+  heapify(arr: number[], count: number, removeIdx: number) {
     while (true) {
-      const leftIdx = idx * 2,
-            rightIdx = idx * 2 + 1
-      let maxIdx = idx
+      const leftIdx = removeIdx * 2,
+            rightIdx = removeIdx * 2 + 1
 
-      if (leftIdx <= size && arr[maxIdx] < arr[leftIdx]) maxIdx = leftIdx
-      if (rightIdx <= size && arr[maxIdx] < arr[rightIdx]) maxIdx = rightIdx
-      if (maxIdx === idx) break
+      let maxIdx = removeIdx
 
-      const tmp = arr[idx]
-      arr[idx] = arr[maxIdx]
-      arr[maxIdx] = tmp
-      idx = maxIdx
+      if (leftIdx <= count && arr[maxIdx] < arr[leftIdx]) {
+        maxIdx = leftIdx
+      } else if (rightIdx <= count && arr[maxIdx] < arr[rightIdx]) {
+        maxIdx = rightIdx
+      }
+
+      if (maxIdx == removeIdx) {
+        break
+      }
+
+      swap(arr, removeIdx, maxIdx)
+      removeIdx = maxIdx
     }
   }
 }
@@ -162,23 +170,21 @@ class Heap<T> {
 这种建堆思路的处理过程是从前往后处理数组数据，并且每个数据插入堆中时，都是从下往上堆化。
 
 ```ts
-// 从前向后处理
-function buildHeap<T>(arr: T[], size: number) {
-  for (let i = 2; i <= size; i++) {
+function buildHeap(arr: number[], size: number) {
+  // 从前向后处理
+  for (let i = 2; i < size; i++) {
     heapify(arr, i)
   }
 }
 
 // 从下往上堆化
-function heapify<T>(arr: T[], idx: number) {
-  let parentIdx = Math.floor(idx / 2)
+function heapify(arr: number, idx: number) {
+  let parentIdx = ~~(idx / 2);
 
   while (parentIdx > 0 && arr[idx] > arr[parentIdx]) {
-    const tmp = arr[idx]
-    arr[idx] = arr[parentIdx]
-    arr[parentIdx] = tmp
+    swap(arr, idx, parentIdx)
     idx = parentIdx
-    parentIdx = Math.floor(idx / 2)
+    parentIdx = ~~(parentIdx / 2)
   }
 }
 ```
@@ -194,28 +200,30 @@ function heapify<T>(arr: T[], idx: number) {
 ![步骤 2](@imgs/aabb8d15b1b92d5e040895589c60419d.jpg)
 
 ```ts
-// 从后向前处理
-function buildHeap<T>(arr: T[], size: number) {
-  // 从最后一个非叶子节点开始
-  for (let i = Math.floor(size / 2); i >= 1; i--) {
+function buildHeap(arr: number[], size: number) {
+  for (let i = ~~(size / 2); i >= 1; i--) {
     heapify(arr, i, size)
   }
 }
 
-// 从上往下堆化
-function heapify<T>(arr: T[], idx: number, size: number) {
+function heapify(arr: number, idx: number, size: number) {
   while (true) {
-    const leftIdx = idx * 2,
-          rightIdx = idx * 2 + 1
+    let leftIdx = idx * 2,
+        rightIdx = idx * 2 + 1
+
     let maxIdx = idx
 
-    if (leftIdx <= size && arr[maxIdx] < arr[leftIdx]) maxIdx = leftIdx
-    if (rightIdx <= size && arr[maxIdx] < arr[rightIdx]) maxIdx = rightIdx
-    if (maxIdx === idx) break
+    if (leftIdx <= size && arr[maxIdx] < arr[leftIdx]) {
+      maxIdx = leftIdx
+    } else if (rightIdx <= size && arr[maxIdx] < arr[rightIdx]) {
+      maxIdx = rightIdx
+    }
 
-    const tmp = arr[idx]
-    arr[idx] = arr[maxIdx]
-    arr[maxIdx] = tmp
+    if (maxIdx === idx) {
+      break
+    }
+
+    swap(arr, idx, maxIdx)
     idx = maxIdx
   }
 }
@@ -232,6 +240,8 @@ function heapify<T>(arr: T[], idx: number, size: number) {
 将每个非叶子节点的高度求和，得出的就是建堆的时间复杂度。
 
 ![时间复杂度公式](@imgs/f712f8a7baade44c39edde839cefcc09.jpg)
+
+两边乘 2：
 
 ![两边乘 2](@imgs/629328315decd96e349d8cb3940636df.jpg)
 
