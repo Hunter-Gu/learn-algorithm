@@ -2,24 +2,17 @@
 
 选择排序算法的实现思路有点类似插入排序，也分已排序区间和未排序区间。但是选择排序每次会从未排序区间中找到最小的元素，将其放到已排序区间的末尾。
 
+核心：**找到数组中最小的元素，将它和数组的第一个元素交换位置；再次，在剩下的元素中找到最小的元素，将它与数组的第二个元素交换位置。**
+
+> 交换元素的代码写在循环内，所以交换的总次数是 N，所以算法的时间效率取决于比较大次数。
+
+> 选择排序大约需要 N ^ 2 / 2 次比较和 N 次交换。
+
 ![选择排序](@imgs/32371475a0b08f0db9861d102474181d.jpg)
 
-```ts
-function selectionSort(arr: number[]) {
-  for (let i = 0; i < arr.length; i++) {
-    let minIndex = i
-    for (let j = i; j < arr.length; j++) {
-      if (arr[j] < arr[minIndex]) {
-        minIndex = j
-      }
-    }
-    const tmp = arr[i]
-    arr[i] = arr[minIndex]
-    arr[minIndex] = tmp
-  }
-  return arr
-}
-```
+<<< @/docs/sort/code/selection.ts
+
+<<< @/docs/sort/code/selection.c
 
 ## 性能分析
 
@@ -46,3 +39,10 @@ function selectionSort(arr: number[]) {
 - 平均情况：O(n^2)
 
 选择排序在所有情况下，都是一样的表现。找出最小值的时间复杂度为 O(n)，需要执行 n 次，所以任何情况下的时间复杂度都是 O(n^2)。
+
+## 特点
+
+- 选择排序的**运行时间和输入无关**
+	- 为了找出最小元素而扫描一遍数组，并不能为下一遍扫描提供什么信息
+- 数据移动是最少的
+	- 每次交换都会改变两个数组元素的值，一共 N 次（交换次数和数组大小是线性关系）
