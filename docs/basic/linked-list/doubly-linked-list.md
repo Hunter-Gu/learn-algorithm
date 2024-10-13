@@ -48,3 +48,9 @@ interface DoublyLinkedListNode<T> {
 ```
 
 总的来说，双向链表要比单链表更加高效，所以在实际的软件开发中，尽管比较费内存，双向链表还是比单链表的应用更加广泛。如 Java 中的 `LinkedHashMap` 的实现中就用到了双向链表。
+
+## 使用场景
+
+- LRU
+- do/undo（撤销/重做
+- 浏览器前进后退

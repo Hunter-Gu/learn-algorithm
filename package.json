@@ -13,5 +13,8 @@
   "devDependencies": {
     "vitepress": "^0.1.1",
     "vuepress": "^1.4.0"
+  },
+  "engines": {
+    "node": "< 15"
   }
 }
